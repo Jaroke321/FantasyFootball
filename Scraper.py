@@ -32,7 +32,7 @@ class Scraper(object):
 
         Scraper.scraperCount += 1  # Increment the count class variable
         # Used to name each team in case multiple scrap objects exist
-        self.teamName = "Team #{0}".format(Scraper.scraperCount)
+        self.teamName = "Team_{0}".format(Scraper.scraperCount)
         # Create a temp directory to store data for each scraper object
         self.tempDir = "temp_{0}".format(Scraper.scraperCount)
         # Create the data directory that is associated with this Scraper
@@ -122,6 +122,13 @@ class Scraper(object):
         self.deleteDataDirectory()
         print("Done")
 
+    
+    def searchPlayer(self, playerName):
+        '''Used to search for a single player from the command line'''
+
+    def searchDefense(self, defenseName):
+        '''Used to search for a single defense from the command line'''
+
     def printTeam(self):
         '''This method will order the players and defenses in order to determine
         which are the best to start this week.'''
@@ -189,7 +196,7 @@ class Scraper(object):
         '''This method will save the current team to a file with the week number
         with the team ranked. If file is None, default file location will be used.'''
 
-        loc = "Week_{0}.txt".format(Scraper.weekNumber) # Default save location
+        loc = "Week{0}_{1}.txt".format(Scraper.weekNumber, self.teamName) # Default save location
         # Check if the user entered a different save location
         if(file):
             loc = file

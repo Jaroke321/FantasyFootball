@@ -14,7 +14,7 @@ def main():
     # Use getopt to parse the arguments
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'f:v:so:h',
-            ["filename=", "verbosity=", "save", "outputfile=", "help"])
+            ["filename=", "verbosity=", "save", "outputfile=", "help", "sp=", "sd="])
     except getopt.GetoptError as err:
         print(err) # Print the error
         usage()    # Call usage to show user how app is used
@@ -37,24 +37,28 @@ def main():
             # Save to the specified output file
             save = True
             outputfile = a
+        elif o == "--sp":
+            # User is searching for a player
+        elif o == "--sd":
+            # User is searching for a defense
         elif(o in ["-h", "--help"]):
             usage()
             sys.exit()
 
     # Create the scraper object using the filename
-    #scraper = Scraper(file = filename)
+    scraper = Scraper(file = filename)
 
     # Call the correct function to start the program
-    #if verbosity == 1:
-    #    verbosity_one(scraper)
-    #elif verbosity == 2:
-    #    verbosity_two(scraper)
-    #else:
-    #    verbosity_three(scraper)
+    if verbosity == 1:
+        verbosity_one(scraper)
+    elif verbosity == 2:
+        verbosity_two(scraper)
+    else:
+        verbosity_three(scraper)
 
     # Check if the user wants to save to file
-    #if save:
-    #    scraper.save(outputfile)
+    if save:
+        scraper.save(outputfile)
 
 
 def verbosity_one(scraper):
@@ -136,6 +140,11 @@ def usage():
                             " program be saved to a file in the working directory." +
                             " No value is needed when using this flag. By default the" +
                             " program will not save the output to a file.\n\n") 
+
+    print("   -o, --outputfile [filename]\t-> Allows you to define the output file you would want to use " + 
+                            "to save the data to.")
+
+    print("   -h, --help\t\t\t-> Displays the help screen describing all of the available flags.")
 
 
 if __name__ == '__main__':
