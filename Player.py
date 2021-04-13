@@ -110,41 +110,6 @@ class Player(object):
 				# Append the value into the players schedule
 				self.schedule.append(opp)
 
-	@staticmethod
-	def getDefenseRankings(dir):
-		'''This method will go through ESPN data and get all passing and rushing
-		stats for all defenses in the NFL. Results will be stored in the instance
-		variable defenseRankings'''
-
-		# Make the request to the webpage at ESPN
-		webpage = requests.get(Player.defenseLink)
-		# Create the file to store the resulting webpage
-		file = open("{0}/{1}.html".format(dir, "espn_defenses"), "w")
-		file.write(webpage.text)  # Write the HTML to file
-		file.close()              # Close the file
-
-		# Open the file and extract the data
-		with open("{0}/{1}.html".format(dir, "espn_defenses"), "r") as f:
-			# Create a BeautifulSoup object to parse the data
-			soup = BeautifulSoup(f.read(), 'html.parser')
-			# Get all of the tables that store the teams defense data
-			tables = soup.find_all('tr', class_ = "Table__TR--sm")
-
-			# Go through the tables and add name and data to the Player.defenseRankings
-			for i in range(32):
-				# Get the team name
-				team_name = tables[i].text.split()[-1]
-				# Get the correct data
-				temp_list = []     # Used to store the relevant data
-				# Get the data for the team as a list
-				temp_data = tables[i+32].find_all('div')
-				# Add correct data to the list
-				temp_list.append(temp_data[2].text)
-				temp_list.append(temp_data[4].text)
-				temp_list.append(temp_data[6].text)
-				temp_list.append(temp_data[8].text)
-				# Add the list and the team name to the dictionary
-				Player.defenseRankings[team_name] = temp_list
 
 	def getOpponent(self, dic):
 		'''This method will take in a dictionary holding all of this weeks
@@ -213,6 +178,10 @@ class Player(object):
 		for s in self.schedule:
 			print("\t --> " + s)
 
+####################################################
+# STATIC METHODS
+####################################################
+
 	@staticmethod
 	def printDefenseData():
 		'''This static method will print the current data that is stored for
@@ -225,3 +194,40 @@ class Player(object):
 			print("   --> Total yds/g: {0} , Passing yds/g: {1} , Rushing yds/g: {2} , Points/g : {3}"
 				.format(v[0], v[1], v[2], v[3]))
 			print()
+
+
+	@staticmethod
+	def getDefenseRankings(dir):
+		'''This method will go through ESPN data and get all passing and rushing
+		stats for all defenses in the NFL. Results will be stored in the instance
+		variable defenseRankings'''
+
+		# Make the request to the webpage at ESPN
+		webpage = requests.get(Player.defenseLink)
+		# Create the file to store the resulting webpage
+		file = open("{0}/{1}.html".format(dir, "espn_defenses"), "w")
+		file.write(webpage.text)  # Write the HTML to file
+		file.close()              # Close the file
+
+		# Open the file and extract the data
+		with open("{0}/{1}.html".format(dir, "espn_defenses"), "r") as f:
+			# Create a BeautifulSoup object to parse the data
+			soup = BeautifulSoup(f.read(), 'html.parser')
+			# Get all of the tables that store the teams defense data
+			tables = soup.find_all('tr', class_ = "Table__TR--sm")
+
+			# Go through the tables and add name and data to the Player.defenseRankings
+			for i in range(32):
+				# Get the team name
+				team_name = tables[i].text.split()[-1]
+				# Get the correct data
+				temp_list = []     # Used to store the relevant data
+				# Get the data for the team as a list
+				temp_data = tables[i+32].find_all('div')
+				# Add correct data to the list
+				temp_list.append(temp_data[2].text)
+				temp_list.append(temp_data[4].text)
+				temp_list.append(temp_data[6].text)
+				temp_list.append(temp_data[8].text)
+				# Add the list and the team name to the dictionary
+				Player.defenseRankings[team_name] = temp_list

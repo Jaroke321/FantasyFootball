@@ -39,8 +39,12 @@ def main():
             outputfile = a
         elif o == "--sp":
             # User is searching for a player
+            Scraper.searchPlayer(a)
+            sys.exit()
         elif o == "--sd":
             # User is searching for a defense
+            Scraper.searchDefense(a)
+            sys.exit()
         elif(o in ["-h", "--help"]):
             usage()
             sys.exit()

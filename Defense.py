@@ -159,41 +159,6 @@ class Defense(object):
 					break
 
 
-	@staticmethod
-	def getOffenseRankings(dir):
-		'''This method will gather all of the teams in the league and some of
-		the general data that is associated with their offenses. This data will
-		then be stored in the class variable, offenseRankings.'''
-
-		# Make the web request to get the html
-		webpage = requests.get(Defense.offenseLink)
-		# Create the file and write the page to it
-		file = open("{0}/{1}.html".format(dir, "espn_offenses"), "w")
-		file.write(webpage.text)
-		file.close()
-
-		# Open the file and extract the appropriate data
-		with open("{0}/{1}.html".format(dir, "espn_offenses"), "r") as f:
-			# Create a BeautifulSoup object
-			soup = BeautifulSoup(f.read(), 'html.parser')
-			data = soup.find_all('tr', class_ = 'Table__TR--sm')
-
-			# Go through once for each NFL team and get the data and team name
-			for i in range(32):
-				# Get team name
-				team = data[i].text
-				temp_list = []  # Holds all of the data
-				# Get all of the div elements from the html
-				temp_data = data[i + 32].find_all('div')
-				# Add the correct columns to the list
-				temp_list.append(temp_data[2].text)
-				temp_list.append(temp_data[4].text)
-				temp_list.append(temp_data[6].text)
-				temp_list.append(temp_data[8].text)
-				# Add the list to the dictionary with the team name as key
-				Defense.offenseRankings[team] = temp_list
-
-
 	def calculateScore(self):
 		'''This method will calculate the score associated with this defense
 		using all of the data gathered. This score represents the value of
@@ -242,6 +207,9 @@ class Defense(object):
 		for o in self.schedule:
 			print("\t-> " + o)
 
+##############################################################
+# STATIC METHODS
+##############################################################
 
 	@staticmethod
 	def printOffenseData():
@@ -253,3 +221,37 @@ class Defense(object):
 			print("   --> Total yds/g: {0} , Passing yds/g: {1} , Rushing yds/g: {2} , Points/g : {3}"
 				.format(v[0], v[1], v[2], v[3]))
 			print()
+
+	@staticmethod
+	def getOffenseRankings(dir):
+		'''This method will gather all of the teams in the league and some of
+		the general data that is associated with their offenses. This data will
+		then be stored in the class variable, offenseRankings.'''
+
+		# Make the web request to get the html
+		webpage = requests.get(Defense.offenseLink)
+		# Create the file and write the page to it
+		file = open("{0}/{1}.html".format(dir, "espn_offenses"), "w")
+		file.write(webpage.text)
+		file.close()
+
+		# Open the file and extract the appropriate data
+		with open("{0}/{1}.html".format(dir, "espn_offenses"), "r") as f:
+			# Create a BeautifulSoup object
+			soup = BeautifulSoup(f.read(), 'html.parser')
+			data = soup.find_all('tr', class_ = 'Table__TR--sm')
+
+			# Go through once for each NFL team and get the data and team name
+			for i in range(32):
+				# Get team name
+				team = data[i].text
+				temp_list = []  # Holds all of the data
+				# Get all of the div elements from the html
+				temp_data = data[i + 32].find_all('div')
+				# Add the correct columns to the list
+				temp_list.append(temp_data[2].text)
+				temp_list.append(temp_data[4].text)
+				temp_list.append(temp_data[6].text)
+				temp_list.append(temp_data[8].text)
+				# Add the list to the dictionary with the team name as key
+				Defense.offenseRankings[team] = temp_list

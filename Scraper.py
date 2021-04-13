@@ -16,6 +16,7 @@ class Scraper(object):
 
     # Used to get the current week that will be used for all Scraper objects
     gameLink = "https://www.espn.com/nfl/schedule"
+    directory = "search"  # Directory used when searching for a single player or defense
 
     weekNumber = -1   # Used to store the current week number, default -1
     scraperCount = 0  # Used to count number of scrapers being used at once
@@ -121,13 +122,7 @@ class Scraper(object):
         print("Deleting all temporary files created")
         self.deleteDataDirectory()
         print("Done")
-
-    
-    def searchPlayer(self, playerName):
-        '''Used to search for a single player from the command line'''
-
-    def searchDefense(self, defenseName):
-        '''Used to search for a single defense from the command line'''
+        
 
     def printTeam(self):
         '''This method will order the players and defenses in order to determine
@@ -217,37 +212,6 @@ class Scraper(object):
             # Write in the Defenses
             for d in self.defense:
                 f.write("  - {0} , score = {1}\n".format(d.team, d.score))
-
-
-    @staticmethod
-    def getCurrentWeek(dir):
-        '''This method takes in a directory name and gathers both the current
-        week number in the NFL and the current matchups this week.'''
-        # Make the request to ESPN
-        webpage = requests.get(Scraper.gameLink)
-        # Create and open the file
-        file = open("{0}/{1}.html".format(dir, Player.scheduleLoc), "w")
-        file.write(webpage.text)  # Write the html to the file
-        file.close()              # Close the file
-
-        # Open the file and het the current week number
-        with open("{0}/{1}.html".format(dir, Player.scheduleLoc), "r") as f:
-            # Create a beautiful soup object
-            soup = BeautifulSoup(f.read(), 'html.parser')
-            # Get the dropdown menu that selects each weeks schedule
-            dropdown = soup.find('div', class_="dropdown-type-week")
-            # Extract from dropwdown the current week option
-            weekOption = dropdown.find(selected="selected")
-            # Update the class attribute that holds the current week
-            Scraper.weekNumber = weekOption.text.split()[1]
-
-            # Get all of the teams matchups for the week
-            matchups = soup.find_all('a', class_="team-name")
-            # Cycle through each game and get the away and home teams
-            for i in range(0, len(matchups), 2):
-                away = matchups[i].abbr.get('title').split()[-1]
-                home = matchups[i+1].abbr.get('title').split()[-1]
-                Scraper.schedule[away] = home
 
 
     def print(self):
@@ -344,3 +308,72 @@ class Scraper(object):
         for k, v in Scraper.schedule.items():
             print("  - " + k + " @ " + v)
             print()
+
+######################################################################
+# STATIC METHODS
+######################################################################
+
+
+    @staticmethod
+    def getCurrentWeek(dir):
+        '''This method takes in a directory name and gathers both the current
+        week number in the NFL and the current matchups this week.'''
+        # Make the request to ESPN
+        webpage = requests.get(Scraper.gameLink)
+        # Create and open the file
+        file = open("{0}/{1}.html".format(dir, Player.scheduleLoc), "w")
+        file.write(webpage.text)  # Write the html to the file
+        file.close()              # Close the file
+
+        # Open the file and het the current week number
+        with open("{0}/{1}.html".format(dir, Player.scheduleLoc), "r") as f:
+            # Create a beautiful soup object
+            soup = BeautifulSoup(f.read(), 'html.parser')
+            # Get the dropdown menu that selects each weeks schedule
+            dropdown = soup.find('div', class_="dropdown-type-week")
+            # Extract from dropwdown the current week option
+            weekOption = dropdown.find(selected="selected")
+            # Update the class attribute that holds the current week
+            Scraper.weekNumber = weekOption.text.split()[1]
+
+            # Get all of the teams matchups for the week
+            matchups = soup.find_all('a', class_="team-name")
+            # Cycle through each game and get the away and home teams
+            for i in range(0, len(matchups), 2):
+                away = matchups[i].abbr.get('title').split()[-1]
+                home = matchups[i+1].abbr.get('title').split()[-1]
+                Scraper.schedule[away] = home
+
+
+    @staticmethod
+    def searchPlayer(self, playerName):
+        '''Used to search for a single player from the command line'''
+
+        # Create the player object
+        player = Player(playerName)
+
+        # Use try block to catch misspelled names here
+        try:
+            player.getData(Scraper.directory)          # Get the players data
+            player.getScheduleData(Scraper.directory)  # Get the opponents played up until this point
+        except:
+            print("ERROR: The player you entered seems not to exist")
+            print("Try entering the name all lowercase with a hyphen between the first and last names.")
+
+
+    @staticmethod
+    def searchDefense(self, defenseName):
+        '''Used to search for a single defense from the command line'''
+
+        # Create the Defense object
+        defense = Defense(defenseName)
+
+        # Use a try catch block to catch misspelled names and errors
+        try:
+            defense.getData(Scraper.directory)        # Get the defenses data
+            defense.getSchedule(Scraper.directory)    # Get the opponents played up until this point
+        except:
+            print("ERROR: The defense you entered seems not to exist.")
+            print("Make sure the name is lowercase.")
+
+
