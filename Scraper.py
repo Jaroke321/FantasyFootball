@@ -120,7 +120,7 @@ class Scraper(object):
 
         # Delete all of the temporary files created
         print("Deleting all temporary files created")
-        self.deleteDataDirectory()
+        Scraper.deleteDataDirectory(self.tempDir)
         print("Done")
         
 
@@ -243,13 +243,14 @@ class Scraper(object):
             print("Data directory is already created")
 
 
-    def deleteDataDirectory(self):
+    @staticmethod
+    def deleteDataDirectory(dir):
         '''This method deletes all of the temporary files in the data
         directory and then deletes the data directory. This method should
         be called at the end of the scraping process'''
 
         # Get the path of the data directory
-        data = self.tempDir
+        data = dir
         current = os.getcwd()
         path = os.path.join(current, data)
         # list all of the files within the directory
@@ -355,12 +356,11 @@ class Scraper(object):
         # Use try block to catch misspelled names here
         try:
             Scraper.makeDataDirectory(Scraper.directory)
-            Player.getDefenseRankings(Scraper.directory)
+            Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
             player.getData(Scraper.directory)              # Get the players data
             player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
-            player.printPlayer()
-            print()
-            Player.printDefenseData()
+            player.printPlayer()                           # Prints the players stats to the terminal 
+            Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
         except:
             print("ERROR: The player you entered seems not to exist")
             print("Try entering the name all lowercase with a hyphen between the first and last names.")

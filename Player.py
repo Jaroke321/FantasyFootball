@@ -59,6 +59,10 @@ class Player(object):
 			categories = soup.find_all('thead')[1].find_all('th')
 			self.position = position[0].text.strip()
 
+			# Add team to the stats and cetegories first
+			self.stats.append(stats[1].text.strip())
+			self.categories.append("Team")
+
 			for i in range(4, len(stats)):
 				self.stats.append(stats[i].text.strip())
 				self.categories.append(categories[i].text.strip())
@@ -126,7 +130,8 @@ class Player(object):
 
 
 		opp = "Bye Week"                    # Create a default value for opponent
-		team = self.stats[-2].split()[-1]   # Takes the team and separates the city
+		team = self.stats[0].split()[-1]    # Takes the team and separates the city
+		print(team)
 
 		# Account for Washington Football Team
 		if (team == "Team"):
@@ -148,6 +153,11 @@ class Player(object):
 		along with the general data gathered for defenses to caluclate a score
 		associated with the player, which represents their value in the current
 		week of the season.'''
+
+		# When the current player is on a bye, give them a zero and exit the function
+		if(self.opponent == "Bye Week"):
+			self.score = 0
+			return
 
 		# First get the average defense that this player has faced up until now
 		avg_def = [0.0 ,0.0, 0.0, 0.0]
@@ -240,3 +250,6 @@ class Player(object):
 				temp_list.append(temp_data[8].text)
 				# Add the list and the team name to the dictionary
 				Player.defenseRankings[team_name] = temp_list
+
+		# Add a entry for a bye week
+		Player.defenseRankings["Bye Week"] = [0.0, 0.0, 0.0, 0.0]
