@@ -52,29 +52,38 @@ class Player(object):
 			# Create a beautiful soup object to scrap through data
 			soup = BeautifulSoup(f.read(), 'html.parser')
 			# Get the players stats, their position, and column headers from the html
-			stats = soup.tbody.find_all('tr')[-1].find_all('td')
+			#stats = soup.tbody.find_all('tr')[-1].find_all('td')
 			position = soup.find_all('span', class_="nfl-c-player-header__position")
+
+			stats = soup.find_all('tr')[-2].find_all('td')
+			categories = soup.find_all('thead')[1].find_all('th')
+			self.position = position[0].text.strip()
+
+			for i in range(4, len(stats)):
+				self.stats.append(stats[i].text.strip())
+				self.categories.append(categories[i].text.strip())
+
 			# Used to find the data categories
-			temp = soup.find_all('thead')[0]
-			categories = temp.find_all('th')
+			#temp = soup.find_all('thead')[0]
+			#categories = temp.find_all('th')
 
 			# Update the current players position
-			self.position = position[0].text.strip()
+			#self.position = position[0].text.strip()
 			# Go through all of the 2020 data
-			i = 1
-			current = stats[-(i)].text.strip()
+			#i = 1
+			#current = stats[-(i)].text.strip()
+			#print(current)
 			# Go until all of the data is found and add it to the data array
-			while(current != '2020'):
-				self.stats.append(current)
-				i += 1
-				current = stats[-(i)].text.strip()
-
+			#while(current != '2020'):
+			#	self.stats.append(current)
+			#	i += 1
+			#	current = stats[-(i)].text.strip()
 			# Add the year manually
-			self.stats.append(current)
+			#self.stats.append(current)
 
 			# Go through all of the catefories and update the dataCategories attribute
-			for i in range(len(categories)):
-				self.categories.append(categories[-(i+1)].text)
+			#for i in range(len(categories)):
+			#	self.categories.append(categories[-(i+1)].text)
 
 	def getScheduleData(self, dir):
 		'''This method will get the opponents defenses that the player has faced
@@ -167,8 +176,8 @@ class Player(object):
 		and prints it to the console neatly.'''
 
 		print(self.name + ", Position: " + self.position)
-		print("This Week's Opponent: {0}".format(self.opponent))
-		print("Fantasy Score: {0}".format(self.score))
+		#print("This Week's Opponent: {0}".format(self.opponent))
+		#print("Fantasy Score: {0}".format(self.score))
 		print("\nPLAYER DATA:\n")
 
 		for i in range(len(self.stats)):

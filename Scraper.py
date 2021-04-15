@@ -37,7 +37,7 @@ class Scraper(object):
         # Create a temp directory to store data for each scraper object
         self.tempDir = "temp_{0}".format(Scraper.scraperCount)
         # Create the data directory that is associated with this Scraper
-        self.makeDataDirectory()
+        Scraper.makeDataDirectory(self.tempDir)
 
         # Create data directory and update the current week when first Scraper is created
         if (Scraper.weekNumber == -1):
@@ -226,13 +226,13 @@ class Scraper(object):
         for d in self.defense:
             print("  --> " + d.team)
 
-
-    def makeDataDirectory(self):
+    @staticmethod
+    def makeDataDirectory(dir):
         '''This method creates a temporary data directory to be used to
         store HTML files collected throughout the scraping process'''
 
         # Create the path for the directory in the current directory
-        directory = self.tempDir
+        directory = dir
         current = os.getcwd()
         path = os.path.join(current, directory)
 
@@ -346,7 +346,7 @@ class Scraper(object):
 
 
     @staticmethod
-    def searchPlayer(self, playerName):
+    def searchPlayer(playerName):
         '''Used to search for a single player from the command line'''
 
         # Create the player object
@@ -354,15 +354,20 @@ class Scraper(object):
 
         # Use try block to catch misspelled names here
         try:
-            player.getData(Scraper.directory)          # Get the players data
-            player.getScheduleData(Scraper.directory)  # Get the opponents played up until this point
+            Scraper.makeDataDirectory(Scraper.directory)
+            Player.getDefenseRankings(Scraper.directory)
+            player.getData(Scraper.directory)              # Get the players data
+            player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
+            player.printPlayer()
+            print()
+            Player.printDefenseData()
         except:
             print("ERROR: The player you entered seems not to exist")
             print("Try entering the name all lowercase with a hyphen between the first and last names.")
 
 
     @staticmethod
-    def searchDefense(self, defenseName):
+    def searchDefense(defenseName):
         '''Used to search for a single defense from the command line'''
 
         # Create the Defense object
