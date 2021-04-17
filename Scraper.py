@@ -4,6 +4,7 @@ import sys
 from bs4 import BeautifulSoup
 from Defense import Defense
 from Player import Player
+from Grapher import Grapher
 
 
 class Scraper(object):
@@ -361,9 +362,13 @@ class Scraper(object):
             player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
             player.printPlayer()                           # Prints the players stats to the terminal 
             Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
-        except:
-            print("ERROR: The player you entered seems not to exist")
-            print("Try entering the name all lowercase with a hyphen between the first and last names.")
+
+            # Use a Grapher to show the graphs for the player being searched
+            Grapher.graphSinglePlayer(player)
+
+
+        except Exception as e:
+            print(e)
 
 
     @staticmethod

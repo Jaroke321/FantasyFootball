@@ -10,11 +10,12 @@ def main():
     verbosity = 1            # Default vebosity level for the program
     save = False             # Boolean to store whether or not to save outout to file
     outputfile = None        # Default value for the output file to save to
+    graph = False            # Used to determine whether or not to graph data
 
     # Use getopt to parse the arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'f:v:so:h',
-            ["filename=", "verbosity=", "save", "outputfile=", "help", "sp=", "sd="])
+        opts, args = getopt.getopt(sys.argv[1:], 'f:v:so:hg',
+            ["filename=", "verbosity=", "save", "outputfile=", "help", "sp=", "sd=", "graph"])
     except getopt.GetoptError as err:
         print(err) # Print the error
         usage()    # Call usage to show user how app is used
@@ -37,6 +38,8 @@ def main():
             # Save to the specified output file
             save = True
             outputfile = a
+        elif(o in ["-g", "--graph"]):
+            graph = True
         elif o == "--sp":
             # User is searching for a player
             Scraper.searchPlayer(a)
@@ -63,6 +66,10 @@ def main():
     # Check if the user wants to save to file
     if save:
         scraper.save(outputfile)
+
+    # Graph the results if the user used graph flags
+    #if graph:
+
 
 
 def verbosity_one(scraper):
