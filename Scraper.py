@@ -364,7 +364,7 @@ class Scraper(object):
             Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
 
             # Use a Grapher to show the graphs for the player being searched
-            Grapher.graphSinglePlayer(player)
+            Grapher.graphSinglePlayer(player, Player.defenseRankings)
 
 
         except Exception as e:

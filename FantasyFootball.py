@@ -155,6 +155,10 @@ def usage():
     print("   -o, --outputfile [filename]\t-> Allows you to define the output file you would want to use " + 
                             "to save the data to.")
 
+    print("  -g, --graph\t\t\t-> Allows the user to display relevant graphs based on the players and defenses that are " +
+                            "used. Can work both when using a file as imput with multiple players and defenses " +
+                            "or when just searching for a single player or defense.")
+
     print("   -h, --help\t\t\t-> Displays the help screen describing all of the available flags.")
 
 

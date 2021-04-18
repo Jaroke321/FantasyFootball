@@ -32,17 +32,44 @@ class Grapher(object):
         self.rankings = rankings
         self.statList = statList
 
+
+    ###################################
+    # Static methods
+    ###################################
+
     @staticmethod
-    def graphSinglePlayer(player):
+    def graphSinglePlayer(player, defenseRankings):
         '''This method will be used for the search player function in the Scraper class to display the 
         correct graphs for a single player'''
 
         mainColor = Grapher.teamColor[player.stats[0]] # Grabs the main color for the team the player is apart of
-        #print(mainColor)
 
-        y1 = np.array([1,4,9,16,5,4,3])
+        # These lists represent the x and y vlues of the first plot
+        statArray = []
+        weeks = []
+        
+        # Populate the lists with each value of the x axis representing a week in the NFL
+        for game in player.gameStats:
+            weeks.append(int(game[0]))  # Week number
+            # Passing yards for wach week in the y axis
+            if(not (game[4] == '')):     
+                statArray.append(int(game[4]))
+            else:
+                statArray.append(0)
 
-        plt.plot(y1, c = mainColor)
+        y1 = np.array(statArray)
+        x1 = np.array(weeks)
+
+        plt.plot(x1, y1, c = mainColor)
+
+        plt.grid(linestyle = '--', linewidth = 0.5)
+
+        plt.xlabel("Week")
+        plt.ylabel("Passing Yards")
+
+        plt.title("Passing Yards / Week VS. Defenses")
+
+        plt.suptitle(str(player.name))
 
         plt.show()  # Print the final graph for the player
 

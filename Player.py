@@ -23,13 +23,15 @@ class Player(object):
 	def __init__(self, name):
 
 		# Holds all of the data relevant to the player
-		self.name = name     # Holds the players name
-		self.position = ""   # Holds the players position
-		self.stats = []      # Holds all of the stats for the player
-		self.schedule = []   # Holds the past schedule of the player
-		self.opponent = ""   # Holds the current opponent
-		self.score = 0       # Holds the final score value for the player
-		self.categories = [] # Holds all of the data categories for the player
+		self.name = name           # Holds the players name
+		self.position = ""         # Holds the players position
+		self.stats = []            # Holds all of the stats for the player for the past year
+		self.gameStats = []        # Holds all of the stats per game for the current or past season
+		self.gameCategories = []   # Holds all of the categories for the individual games
+		self.schedule = []         # Holds the past schedule of the player
+		self.opponent = ""         # Holds the current opponent
+		self.score = 0             # Holds the final score value for the player
+		self.categories = []       # Holds all of the data categories for the player
 
 	def getData(self, dir):
 		'''This method will make the HTTP request to the website in order to get the
@@ -49,15 +51,18 @@ class Player(object):
 
 		# Extract the data from the file
 		with open("{0}/{1}.html".format(dir, self.name), 'r') as f:
-			# Create a beautiful soup object to scrap through data
+
+			# Create a beautiful soup object to scrape through data
 			soup = BeautifulSoup(f.read(), 'html.parser')
+
 			# Get the players stats, their position, and column headers from the html
-			#stats = soup.tbody.find_all('tr')[-1].find_all('td')
 			position = soup.find_all('span', class_="nfl-c-player-header__position")
 
-			stats = soup.find_all('tr')[-2].find_all('td')
-			categories = soup.find_all('thead')[1].find_all('th')
-			self.position = position[0].text.strip()
+			# Get all of the total stats associated with the current or previous year
+
+			stats = soup.find_all('tr')[-2].find_all('td')        # All of the accumulated stats for the past year
+			categories = soup.find_all('thead')[1].find_all('th') # Categories of those stats for the past year
+			self.position = position[0].text.strip()              # Store position of the player
 
 			# Add team to the stats and cetegories first
 			self.stats.append(stats[1].text.strip())
@@ -66,6 +71,28 @@ class Player(object):
 			for i in range(4, len(stats)):
 				self.stats.append(stats[i].text.strip())
 				self.categories.append(categories[i].text.strip())
+
+			# Get all of the stats for each week of the season
+			catList = [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]  # represents the relevant columns of the stat table
+
+			# gameTable consists of all of the games that have been played this season and the stats of the players for those games
+			gameTable = soup.find_all('table')[0].find_all('tr')
+			cats = gameTable[0].find_all('th')  # Categories for the stats stored for each individual game
+
+
+			for i in catList: # Skips the result of the game that week, unimportant
+				self.gameCategories.append(cats[i].text.strip())  # Append the stat categories to gameCategories list
+
+			# Go through each week and gather the reevant data
+			for i in range(1,len(gameTable)):
+				tempArr = []  # Each week will be stored in an array of its own
+				currentWeek = gameTable[i].find_all('td') # Get each week in the game table and store it here
+				for i in catList:  # Only grab the relevant columns
+					tempArr.append(currentWeek[i].text.strip())  # Append each stat to the temp array representing a game
+				self.gameStats.append(tempArr)   # Append this weeks game to the gameStats
+
+			# Sort the game stats
+			self.sortGameStats() 
 
 			# Used to find the data categories
 			#temp = soup.find_all('thead')[0]
@@ -88,6 +115,30 @@ class Player(object):
 			# Go through all of the catefories and update the dataCategories attribute
 			#for i in range(len(categories)):
 			#	self.categories.append(categories[-(i+1)].text)
+
+	def sortGameStats(self):
+		'''This method will sort the game stats after they are gathered. This is necessary due to the fact that 
+		NFL.com gives these stats out of order and they muist be in order for graphing to work. Implements bubble sort.'''
+
+
+		sorted = False  # Initialize sorted to False
+
+		# Go through the game stats list until it is osrted
+		while(not sorted):
+			# Start each iteration assuming list is sorted
+			sorted = True 
+			# Go through the list and swap adjacent values that are out of order
+			for i in range(0, len(self.gameStats) - 1):
+				val1 = int(self.gameStats[i][0])
+				val2 = int(self.gameStats[i+1][0])
+
+				if(val2 < val1): # Compare current position with the next position
+					sorted = False  # If true list is not sorted and needs at least one more iteration
+					# Swap the values
+					temp = self.gameStats[i]
+					self.gameStats[i] = self.gameStats[i+1]
+					self.gameStats[i+1] = temp
+				
 
 	def getScheduleData(self, dir):
 		'''This method will get the opponents defenses that the player has faced
