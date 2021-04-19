@@ -359,7 +359,7 @@ class Scraper(object):
             Scraper.makeDataDirectory(Scraper.directory)
             Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
             player.getData(Scraper.directory)              # Get the players data
-            player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
+            #player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
             player.printPlayer()                           # Prints the players stats to the terminal 
             Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
 

@@ -68,6 +68,7 @@ class Player(object):
 			self.stats.append(stats[1].text.strip())
 			self.categories.append("Team")
 
+			# Gather all of the data from the 4th column onward
 			for i in range(4, len(stats)):
 				self.stats.append(stats[i].text.strip())
 				self.categories.append(categories[i].text.strip())
@@ -79,20 +80,26 @@ class Player(object):
 			gameTable = soup.find_all('table')[0].find_all('tr')
 			cats = gameTable[0].find_all('th')  # Categories for the stats stored for each individual game
 
-
-			for i in catList: # Skips the result of the game that week, unimportant
-				self.gameCategories.append(cats[i].text.strip())  # Append the stat categories to gameCategories list
+			# Go through each of the categories and add them to the list
+			for cat in cats:
+				self.gameCategories.append(cat.text.strip())  # Append the stat categories to gameCategories list
 
 			# Go through each week and gather the reevant data
 			for i in range(1,len(gameTable)):
 				tempArr = []  # Each week will be stored in an array of its own
 				currentWeek = gameTable[i].find_all('td') # Get each week in the game table and store it here
-				for i in catList:  # Only grab the relevant columns
-					tempArr.append(currentWeek[i].text.strip())  # Append each stat to the temp array representing a game
+				for i in currentWeek:  # Grab all columns of the current game
+					tempArr.append(i.text.strip())  # Append each stat to the temp array representing a game
 				self.gameStats.append(tempArr)   # Append this weeks game to the gameStats
 
 			# Sort the game stats
 			self.sortGameStats() 
+			# Clean the data to get rid of the '@' in the matchups column
+			self.cleanMatchups()
+
+			# Once the matchups are cleaned, add them to the schedule list
+			for game in self.gameStats:
+				self.schedule.append(game[1])
 
 			# Used to find the data categories
 			#temp = soup.find_all('thead')[0]
@@ -138,6 +145,18 @@ class Player(object):
 					temp = self.gameStats[i]
 					self.gameStats[i] = self.gameStats[i+1]
 					self.gameStats[i+1] = temp
+
+	def cleanMatchups(self):
+		'''This method will access the gameStat array and clean up the matchups that week to get rid of the 
+		unneccessary @ in the String'''
+
+		for i in range(len(self.gameStats)):
+			opp = self.gameStats[i][1]
+			if("@" in opp):
+				self.gameStats[i][1] = opp[1:]
+			if(opp == "Football Team"):
+				self.gameStats[i][1] = "Washington"
+
 				
 
 	def getScheduleData(self, dir):
