@@ -356,19 +356,14 @@ class Scraper(object):
 
         # Use try block to catch misspelled names here
         try:
-            Scraper.makeDataDirectory(Scraper.directory)
-            #Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
-            print("Getting player data")
+            Scraper.makeDataDirectory(Scraper.directory)   # Create the temporary data directory
+            Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
             player.getData(Scraper.directory)              # Get the players data
-            print("Finished getting player data")
             player.printPlayer()                           # Prints the players stats to the terminal 
-            Player.getDefenseRankings(Scraper.directory)
             Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
 
-            print("Getting graph...")
             # Use a Grapher to show the graphs for the player being searched
             Grapher.graphSinglePlayer(player, Player.defenseRankings)
-
 
         except Exception as e:
             print(e)
@@ -383,10 +378,17 @@ class Scraper(object):
 
         # Use a try catch block to catch misspelled names and errors
         try:
-            defense.getData(Scraper.directory)        # Get the defenses data
-            defense.getSchedule(Scraper.directory)    # Get the opponents played up until this point
-        except:
-            print("ERROR: The defense you entered seems not to exist.")
-            print("Make sure the name is lowercase.")
+            Scraper.makeDataDirectory(Scraper.directory)     # Create the temporary data directory
+            Defense.offenseRankings(Scraper.directory)       # Get all of the offensive rankings for the league
+            defense.getData(Scraper.directory)               # Get the defenses data
+            defense.printDefense()                           # Print the current defence to the terminal
+            defense.getSchedule(Scraper.directory)           # Get the opponents played up until this point
+            Scraper.deleteDataDirectory(Scraper.directory)   # Delete the temporary data directory
+
+            # Use the Grapher to graph the current defense
+            #Grapher.graphSingleDefense(defense, Defense.offenseRankings)
+
+        except Exceptioin as e:
+            print(e)
 
 

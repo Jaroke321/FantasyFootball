@@ -48,9 +48,9 @@ class Grapher(object):
         correct graphs for a single player'''
 
         colors = Grapher.teamColor[player.stats[0][1]] # Grabs the main color and accet collor of the players team from the grapher
-        mainColor = colors[0]        # Grabs the main color 
-        accentColor = colors[1]      # Grabs the accent color
-        plt.figure(figsize=(18, 12))  # Sets the size of the graph when it is displayed
+        mainColor = colors[0]           # Grabs the main color 
+        accentColor = colors[1]         # Grabs the accent color
+        plt.figure(figsize = (18, 12))  # Sets the size of the graph when it is displayed
 
         # Create the fonts for the different component of the graphs
         font1 = {'family': 'serif', 'size': 15}
@@ -93,16 +93,17 @@ class Grapher(object):
             plt.bar(bar_list[i], graph2_y[i], color = color_list[i][0], width = barwidth, 
                     edgecolor = color_list[i][1], label = graph2_lbl[i])
 
+        plt.grid(linestyle = '--', linewidth = 0.5)
         plt.xlabel("Year", fontdict = font1)
         plt.ylabel("Stats", fontdict = font1)
         plt.xticks([r + barwidth for r in range(len(graph2_y[0]))], graph2_x)
-                    #[year[0] for year in player.stats])
         plt.title("Stats Per Year")
         plt.legend()
 
         # Plot 3
         plt.subplot(2, 2, 3)
         plt.bar(graph3_x, graph3_y, color = mainColor, edgecolor = accentColor, label = "Yards")
+        plt.grid(linestyle = '--', linewidth = 0.5)
         plt.xlabel("Year", fontdict = font1)
         plt.ylabel("Yards", fontdict = font1)
         plt.xticks(graph3_x)
@@ -112,6 +113,8 @@ class Grapher(object):
         # Plot 4
         plt.subplot(2, 2, 4)
         plt.plot(graph4_x, graph4_y)
+
+        plt.grid(linestyle = '--', linewidth = 0.5)
         plt.xlabel("label for graph 4", fontdict = font1)
         plt.ylabel("Label for graph 4", fontdict = font1)
         plt.title("Graph #4")
@@ -122,10 +125,76 @@ class Grapher(object):
         plt.show()  # Print the final graph for the player
 
     @staticmethod
-    def graphSingleDefense(defense):
+    def graphSingleDefense(defense, offenseRankings):
         '''This method will be used for the search defense function in the scraper class to display the 
         correct graphs for a single player.'''
 
+        # Get the appropriate main color and accent color from the color dictionary
+        colors = Grapher.teamColor[]
+        mainColor = colors[0]
+        accentColor = colors[1]
+
+        plt.figure(figsize = (18, 12)) # Sets the size of the window holding all four graphs
+
+        # Create the fonts for the different component of the graphs
+        font1 = {'family': 'serif', 'size': 15}
+        title_font = {'family': 'serif', 'size': 20}
+
+        # Get all of the arrays for the graphs
+        graph1_x, graph1_y = Grapher.defenseArrayOne(defense, offenseRankings)
+        graph2_x, graph2_y = Grapher.defenseArrayTwo(defense, offenseRankings)
+        graph3_x, graph3_y = Grapher.defenseArrayThree(defense, offenseRankings)
+        graph4_x, graph4_y = Grapher.defenseArrayFour(defense, offenseRankings)
+
+        # Plot 1
+        plt.subplot(2, 2, 1)
+        plt.plot(graph1_x, graph1_y)
+
+        # Set labels for graph 1
+        plt.grid(linestyle = '--', linewidth = 0.5)
+        plt.xlabel("Label for graph #1", fontdict = font1)
+        plt.ylabel("Label for graph #1", fontdict = font1)
+        plt.title("Graph #1")
+
+        # Plot 2
+        plt.subplot(2, 2, 2)
+        plt.plot(graph2_x, graph2_y)
+
+        # Set the labels for graph 2
+        plt.grid(linestyle = '--', linewidth = 0.5)
+        plt.xlabel("Label for graph #2", fontdict = font1)
+        plt.ylabel("Label for graph #2", fontdict = font1)
+        plt.title("Graph #2")
+
+        # Plot 3
+        plt.subplot(2, 2, 3)
+        plt.plot(graph3_x, graph3_y)
+
+        # Set the labels for graph 3
+        plt.grid(linestyle = '--', linewidth = 0.5)
+        plt.xlabel("Label for graph #3", fontdict = font1)
+        plt.ylabel("Label for graph #3", fontdict = font1)
+        plt.title("Graph #3")
+
+        # Plot 4
+        plt.subplot(2, 2, 4)
+        plt.plot(graph4_x, graph4_y)
+
+        # Set the labels for graph 4
+        plt.grid(linestyle = '--', linewidth = 0.5)
+        plt.xlabel("Label for graph #4", fontdict = font1)
+        plt.ylabel("Label for graph #4", fontdict = font1)
+        plt.title("Graph #4")
+
+        # Set the window title 
+        plt.suptitle(str(defense.tean))
+        # Display the graph
+        plt.show()
+
+    
+    ##################################
+    #  Array functions for players   #
+    ##################################
 
     @staticmethod
     def playerArrayOne(player, defenseRankings):
@@ -212,3 +281,33 @@ class Grapher(object):
 
         return [], []
 
+
+    ####################################
+    #   Array functions for defenses   #
+    ####################################
+    
+    @staticmethod
+    def defenseArrayOne(defense, offenseRankings):
+        '''This method will be used by the graphSingledefense method to generate the arrays for the first plot'''
+
+        return []. []
+
+    
+    @staticmethod
+    def defenseArrayTwo(defense, offenseRankings):
+        '''This method will generate the second graph arrays for the graphSingleDefense method'''
+
+        return [], []
+
+    @staticmethod
+    def defenseArrayThree(defense, offenseRankings):
+        '''This method will generate the arrays for the third plot in the graphSingleDefense method.'''
+
+        return [], []
+
+    
+    @staticmethod
+    def defenseArrayFour(defense, offenseRankings)
+        '''This method will generate the arrays for the fourth plot in the graphSingleDefense method.'''
+
+        return [], []
