@@ -82,6 +82,7 @@ class Grapher(object):
 
         # Populate the bar list using the list of y values we have
         bar_list.append(np.arange(len(graph2_y[0])))
+        color_list = [[mainColor, mainColor],[accentColor, accentColor],["#FFFFFF", mainColor]]
 
         # Determine the location of the bars
         for i in range(len(graph2_y[1:])):
@@ -89,22 +90,24 @@ class Grapher(object):
 
         # Make the plot using those bar_list values as the xs and the ys
         for i in range(len(graph2_y)):
-            plt.bar(bar_list[i], graph2_y[i], color = mainColor, width = barwidth, 
-                    edgecolor = accentColor, label = graph2_lbl[i])
+            plt.bar(bar_list[i], graph2_y[i], color = color_list[i][0], width = barwidth, 
+                    edgecolor = color_list[i][1], label = graph2_lbl[i])
 
-        plt.xlabel("Stats", fontdict = font1)
-        plt.ylabel("Year", fontdict = font1)
-        plt.xticks([r + barwidth for r in range(len(graph2_y[0]))],
-                    [year[0] for year in player.stats])
-        plt.title("Stats VS. Year")
+        plt.xlabel("Year", fontdict = font1)
+        plt.ylabel("Stats", fontdict = font1)
+        plt.xticks([r + barwidth for r in range(len(graph2_y[0]))], graph2_x)
+                    #[year[0] for year in player.stats])
+        plt.title("Stats Per Year")
         plt.legend()
 
         # Plot 3
         plt.subplot(2, 2, 3)
-        plt.plot(graph3_x, graph3_y)
-        plt.xlabel("label for graph 3", fontdict = font1)
-        plt.ylabel("Label for graph 3", fontdict = font1)
-        plt.title("Graph #3")
+        plt.bar(graph3_x, graph3_y, color = mainColor, edgecolor = accentColor, label = "Yards")
+        plt.xlabel("Year", fontdict = font1)
+        plt.ylabel("Yards", fontdict = font1)
+        plt.xticks(graph3_x)
+        plt.title("Yards Per year")
+        plt.legend()
 
         # Plot 4
         plt.subplot(2, 2, 4)
@@ -162,9 +165,9 @@ class Grapher(object):
 
         # Change the cat arr based on the position of the player
         if player.position == "RB":
-            cat_arr = [5, 6, 7]
+            cat_arr = [6, 7]
         elif player.position == "WR":
-            cat_arr = [4, 5, 6, 8]
+            cat_arr = [4, 6, 8]
 
         
         # Go through each year the player has played
@@ -186,7 +189,22 @@ class Grapher(object):
     def playerArrayThree(player, defenseRankings):
         '''This method is used by the graphSinglePLayer method to generate the array for the third plot'''
 
-        return [], []
+        year_arr = []   # Used to hold the years the player has been in the league
+        yards_arr = []  # Used to hold the yards for each year
+        yrd_idx = 6     # Holds the index for the yards column in the players stats
+        
+        # Change the yard index depending on the players position
+        if player.position != "QB":
+            yrd_idx = 5
+
+        # Go through each of the years in the players stats
+        for year in player.stats:
+            # Append the correct year and yards for that year into thir arrays
+            year_arr.append(year[0])
+            yards_arr.append(float(year[yrd_idx]))
+
+        # Return both arrays, x then y
+        return year_arr, yards_arr
 
     @staticmethod
     def playerArrayFour(player, defenseRankings):
