@@ -47,23 +47,23 @@ class Grapher(object):
         '''This method will be used for the search player function in the Scraper class to display the 
         correct graphs for a single player'''
 
-        colors = Grapher.teamColor[player.stats[0]] # Grabs the main color and accet collor of the players team from the grapher
+        colors = Grapher.teamColor[player.stats[0][1]] # Grabs the main color and accet collor of the players team from the grapher
         mainColor = colors[0]        # Grabs the main color 
         accentColor = colors[1]      # Grabs the accent color
-        plt.figure(figsize=(15,10))  # Sets the size of the graph when it is displayed
+        plt.figure(figsize=(18, 12))  # Sets the size of the graph when it is displayed
 
         # Create the fonts for the different component of the graphs
         font1 = {'family': 'serif', 'size': 15}
         title_font = {'family': 'serif', 'size': 20}
 
         # Generate the numpy arrays for the first plot
-        graph1_x, graph1_y1, graph1_y2 = Grapher.graphArrayOne(player, defenseRankings)
+        graph1_x, graph1_y1, graph1_y2 = Grapher.playerArrayOne(player, defenseRankings)
         # Second plot arrays
-        graph2_x, graph2_y = Grapher.graphArrayTwo(player, defenseRankings)
+        graph2_x, graph2_y, graph2_lbl = Grapher.playerArrayTwo(player, defenseRankings)
         # Third plot arrays
-        graph3_x, graph3_y = Grapher.graphArrayThree(player, defenseRankings)
+        graph3_x, graph3_y = Grapher.playerArrayThree(player, defenseRankings)
         # Fourth plot arrays
-        graph4_x, graph4_y = Grapher.graphArrayFour(player, defenseRankings)
+        graph4_x, graph4_y = Grapher.playerArrayFour(player, defenseRankings)
 
         # Plot 1
         plt.subplot(2, 2, 1)
@@ -73,14 +73,31 @@ class Grapher(object):
 
         plt.xlabel("Week", fontdict = font1)
         plt.ylabel("Yards", fontdict = font1)
-        plt.title("Yards / Week VS. Defenses")
+        plt.title("Yards VS. Defenses")
 
         # Plot 2
         plt.subplot(2, 2, 2)
-        plt.plot(graph2_x, graph2_y)
-        plt.xlabel("label for graph 2", fontdict = font1)
-        plt.ylabel("Label for graph 2", fontdict = font1)
-        plt.title("Graph #2")
+        barwidth = 0.25   # Width of the bars in the graph
+        bar_list = []     # Will hold the x positions of all of the bars
+
+        # Populate the bar list using the list of y values we have
+        bar_list.append(np.arange(len(graph2_y[0])))
+
+        # Determine the location of the bars
+        for i in range(len(graph2_y[1:])):
+            bar_list.append([x + barwidth for x in bar_list[i]])
+
+        # Make the plot using those bar_list values as the xs and the ys
+        for i in range(len(graph2_y)):
+            plt.bar(bar_list[i], graph2_y[i], color = mainColor, width = barwidth, 
+                    edgecolor = accentColor, label = graph2_lbl[i])
+
+        plt.xlabel("Stats", fontdict = font1)
+        plt.ylabel("Year", fontdict = font1)
+        plt.xticks([r + barwidth for r in range(len(graph2_y[0]))],
+                    [year[0] for year in player.stats])
+        plt.title("Stats VS. Year")
+        plt.legend()
 
         # Plot 3
         plt.subplot(2, 2, 3)
@@ -108,7 +125,7 @@ class Grapher(object):
 
 
     @staticmethod
-    def graphArrayOne(player, defenseRankings):
+    def playerArrayOne(player, defenseRankings):
         '''This method is used by the graphSinglePlayer method to generate the arrays for the first plot'''
 
         yards_idx = player.gameCategories.index("YDS")  # Get the index of the yards column
@@ -125,29 +142,54 @@ class Grapher(object):
         for game in player.gameStats:
             weeks.append(int(game[0]))  # Week number
             defense_arr.append(float(defenseRankings[game[1]][def_idx]))  # Either pass defense or rush defense depending on position of player
-            # Passing yards for wach week in the y axis
+            # Passing yards for each week in the y axis
             if(not (game[yards_idx] == '')):     
                 statArray.append(int(game[yards_idx]))
             else:
                 statArray.append(0)
-
+        # Return the correct arrays
         return weeks, statArray, defense_arr
        
 
     @staticmethod
-    def graphArrayTwo(player, defenseRankings):
+    def playerArrayTwo(player, defenseRankings):
         '''This method is used by the graphSinglePlayer method to generate the arrays for the second plot'''
 
-        return [], []
+        year_arr = []    # Used to holf the years that the player has played in NFL
+        stat_arr = []    # Used to hold the relevant stats for the player per year
+        label_arr = []   # Will the store the stat labels for the different columns
+        cat_arr = [8, 9, 12]  # The columns with the data to show
+
+        # Change the cat arr based on the position of the player
+        if player.position == "RB":
+            cat_arr = [5, 6, 7]
+        elif player.position == "WR":
+            cat_arr = [4, 5, 6, 8]
+
+        
+        # Go through each year the player has played
+        for year in player.stats:
+            year_arr.append(year[0])
+
+        # Get each stat in their own list and append to the stat array
+        for col in cat_arr:
+            temp_list = []
+            label_arr.append(player.categories[col])
+            # Get each stat for each year the player has played
+            for year in player.stats:
+                temp_list.append(float(year[col]))
+            stat_arr.append(temp_list)
+
+        return year_arr, stat_arr, label_arr
 
     @staticmethod
-    def graphArrayThree(player, defenseRankings):
+    def playerArrayThree(player, defenseRankings):
         '''This method is used by the graphSinglePLayer method to generate the array for the third plot'''
 
         return [], []
 
     @staticmethod
-    def graphArrayFour(player, defenseRankings):
+    def playerArrayFour(player, defenseRankings):
         '''This method is used by the graphSinglePlayer method to generate the arrays for the fourth plot'''
 
         return [], []

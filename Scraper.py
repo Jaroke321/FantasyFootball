@@ -357,12 +357,15 @@ class Scraper(object):
         # Use try block to catch misspelled names here
         try:
             Scraper.makeDataDirectory(Scraper.directory)
-            Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
+            #Player.getDefenseRankings(Scraper.directory)   # Static function that gets all of the defenses and there rankings
+            print("Getting player data")
             player.getData(Scraper.directory)              # Get the players data
-            #player.getScheduleData(Scraper.directory)      # Get the opponents played up until this point
+            print("Finished getting player data")
             player.printPlayer()                           # Prints the players stats to the terminal 
+            Player.getDefenseRankings(Scraper.directory)
             Scraper.deleteDataDirectory(Scraper.directory) # Delete the temporary data dictionary
 
+            print("Getting graph...")
             # Use a Grapher to show the graphs for the player being searched
             Grapher.graphSinglePlayer(player, Player.defenseRankings)
 
