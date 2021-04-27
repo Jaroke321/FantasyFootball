@@ -379,16 +379,19 @@ class Scraper(object):
         # Use a try catch block to catch misspelled names and errors
         try:
             Scraper.makeDataDirectory(Scraper.directory)     # Create the temporary data directory
-            Defense.offenseRankings(Scraper.directory)       # Get all of the offensive rankings for the league
+            print("Before offensive rankings")
+            Defense.getOffenseRankings(Scraper.directory)    # Get all of the offensive rankings for the league
+            print("After offensive rankings")
             defense.getData(Scraper.directory)               # Get the defenses data
-            defense.printDefense()                           # Print the current defence to the terminal
-            defense.getSchedule(Scraper.directory)           # Get the opponents played up until this point
+            print("After get data")
+            #defense.printDefense()                           # Print the current defence to the terminal
+            #defense.getSchedule(Scraper.directory)           # Get the opponents played up until this point
             Scraper.deleteDataDirectory(Scraper.directory)   # Delete the temporary data directory
 
             # Use the Grapher to graph the current defense
             #Grapher.graphSingleDefense(defense, Defense.offenseRankings)
 
-        except Exceptioin as e:
+        except Exception as e:
             print(e)
 
 

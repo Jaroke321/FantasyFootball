@@ -9,7 +9,7 @@ class Defense(object):
 	####################################################
 
 	# Holds all of the defense category labels that are gathered
-	dataCategories = []
+	Alldata = {}  # Passing, Rushing, Scoring
 	# Holds all of the teams and some relevant stats for their offenses
 	offenseRankings = {}
 
@@ -32,23 +32,30 @@ class Defense(object):
 		in order to get the appropriate data. The data gathered will be both
 		the passing defense and the rushing defense statistics.'''
 
-		# Make both of the links
+		# Make all three of the links
 		passLink = Defense.defenseLink.format("passing")
 		rushLink = Defense.defenseLink.format("rushing")
+		scoreLink = Defense.defenseLink.format("scoring")
 
 		# Make the requests to get the webpage
 		passPage = requests.get(passLink)
 		rushPage = requests.get(rushLink)
+		scorePage = requests.get(scoreLink)
 
 		# Make the files to store the webpages in
 		passFile = open("{0}/{1}.html".format(dir, "passing_defense_stats"), "w")
 		rushFile = open("{0}/{1}.html".format(dir, "rushing_defense_stats"), "w")
+		scoreFile = open("{0}/{1}.html".format(dir, "scoring_defense_stats"), "w")
+
 		# Write data to the file
 		passFile.write(passPage.text)
 		rushFile.write(rushPage.text)
-		# Close both files
+		scoreFile.write(scorePage.text)
+
+		# Close all three files
 		passFile.close()
 		rushFile.close()
+		scoreFile.close()
 
 		# Start with the Pass Ranking
 		with open("{0}/{1}.html".format(dir, "passing_defense_stats"), "r") as f:
@@ -57,24 +64,25 @@ class Defense(object):
 			# Get the data categories first
 			cat = soup.thead.tr.find_all('th')
 			cat_pass = [c.text for c in cat]
+
 			# Append the pass categories to the dataCategories class variable
-			Defense.dataCategories.append(cat_pass)
+			Defense.Alldata["passing_categories"] = cat_pass
 
 			# Get this teams passing stats
 			rows = soup.find_all('tr')[1:]
 			# Go through each row until this team is found
 			for r in rows:
-				# Search once for all of the td elements
-				tds = r.find_all('td')
-				# Get the name from the first element
-				name = tds[0].find('div', class_="d3-o-club-fullname")
-				# Check if the current row represents this teams defense
-				if(name.text.strip() in self.team):
-					# If the team is found, extract all passing data
-					data = [d.text.strip() for d in tds[1:]]
-					# Append the passing data to the data attribute
-					self.data.append(data)
-					break  # End the current loop after the team is found
+				
+				tds = r.find_all('td')    # Seperates each column in the row
+
+				# Get the name of the current team
+				name = tds[0].find('div', class_ = "d3-o-club-fullname").text.strip()
+				# initialize this teams data with an  empty array
+				Defense.Alldata[name] = []
+				# Go through each column and append the data to the team array
+				team_arr = [ d.text.strip() for d in tds[1:] ]
+				# Add the current teams passing data to the data dictionary
+				Defense.Alldata[name].append(team_arr)
 
 		# Extract data from the rush File as well
 		with open("{0}/{1}.html".format(dir, "rushing_defense_stats"), "r") as f:
@@ -83,24 +91,22 @@ class Defense(object):
 			# Get the data categories first
 			cat = soup.thead.tr.find_all('th')
 			cat_rush = [c.text for c in cat]
+
 			# Append the pass categories to the dataCategories class variable
-			Defense.dataCategories.append(cat_rush)
+			Defense.Alldata["rushing_categories"] = cat_rush
 
 			# Get this teams rushing stats
 			rows = soup.find_all('tr')[1:]
-			# Go through each row until this team is found
+			# Go through each row of data
 			for r in rows:
 				# Search once for all td elements in this row
 				tds = r.find_all('td')
 				# Get the name from the first element
-				name = tds[0].find('div', class_="d3-o-club-fullname")
-				# Check if the current row represents this teams defense
-				if(name.text.strip() in self.team):
-					# If the team is found, extract all passing data
-					data = [d.text.strip() for d in tds[1:]]
-					# Append the rushing data to the data attribute
-					self.data.append(data)
-					break  # end the current loop after team is found
+				name = tds[0].find('div', class_="d3-o-club-fullname").text.strip()
+				# Go through each column and get the rushing data for the team
+				team_arr = [ d.text.strip() for d in tds[1:] ]
+				# Add the rushing data to the allData dictionary
+				Defense.Alldata[name].append(team_arr)
 
 
 	def getSchedule(self, dir):

@@ -130,7 +130,7 @@ class Grapher(object):
         correct graphs for a single player.'''
 
         # Get the appropriate main color and accent color from the color dictionary
-        colors = Grapher.teamColor[]
+        colors = Grapher.teamColor["Arizona Cardinals"]
         mainColor = colors[0]
         accentColor = colors[1]
 
@@ -290,7 +290,7 @@ class Grapher(object):
     def defenseArrayOne(defense, offenseRankings):
         '''This method will be used by the graphSingledefense method to generate the arrays for the first plot'''
 
-        return []. []
+        return [], []
 
     
     @staticmethod
@@ -307,7 +307,7 @@ class Grapher(object):
 
     
     @staticmethod
-    def defenseArrayFour(defense, offenseRankings)
+    def defenseArrayFour(defense, offenseRankings):
         '''This method will generate the arrays for the fourth plot in the graphSingleDefense method.'''
 
         return [], []

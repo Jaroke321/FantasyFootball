@@ -255,7 +255,7 @@ class Player(object):
 			# Print the team name first
 			print(k + ":\n")
 			print("   --> Total yds/g: {0} , Passing yds/g: {1} , Rushing yds/g: {2} , Points/g : {3}"
-				.format(v[0], v[1], v[2], v[3]))
+				  .format(v[0], v[1], v[2], v[3]))
 			print()
 
 
@@ -265,16 +265,12 @@ class Player(object):
 		stats for all defenses in the NFL. Results will be stored in the instance
 		variable defenseRankings'''
 
-		print("Making request to get defense data")
-
 		# Make the request to the webpage at ESPN
 		webpage = requests.get(Player.defenseLink)
 		# Create the file to store the resulting webpage
 		file = open("{0}/{1}.html".format(dir, "espn_defenses"), "w")
 		file.write(webpage.text)  # Write the HTML to file
 		file.close()              # Close the file
-
-		print("Done making request.. Parsing data...")
 
 		# Open the file and extract the data
 		with open("{0}/{1}.html".format(dir, "espn_defenses"), "r") as f:
